@@ -1,0 +1,17 @@
+||||From : 01/01/2013 To : 10/11/2015    By user : Super Admin
+Code|Area|Bills|Sub-Total|Paid-Total|Collections|<=7|7<=14|14<=21|21<
+OTH|Other Custermer|3|4599|100|4499|0|0|0|3
+2MO|Yatalamattha Banbarapura|22|112723.4|12057|100666.4|0|3|4|15
+2TU|Kottawa Yatalamatta|90|312073.22|15642.08|296431.14|0|5|9|76
+2WE|Nagoda Unanvitiya|151|906181.21|61829.04|844352.17|0|5|11|135
+2TH|Ovilana Labuduwa|101|1030915.62|63699|967216.62|0|1|4|96
+2FR|Thalagaha Kuruduwatta|111|516793.3|21200|495593.3|0|0|7|104
+2SA|Wanduramba Ovilana|143|816695.74|18991|797704.74|0|0|8|135
+MON|Dangedara  Elliot Road|50|781480.04|10077|771403.04|0|7|10|33
+TUE|Kuruduwatta  Bataduwa|114|929962.36|6270|923692.36|0|11|6|97
+WED|Narawala  Ambalanwatta|95|428331.64|14940|413391.64|0|7|4|84
+THU|Milidduwa Magalle|152|2368705.8|8862|2359843.8|0|6|6|140
+FRI|Kithulampitiya Karapitiya|302|2940946.11|50837|2890109.11|0|2|14|286
+SAT|Kuruduwatta Kottawa|137|780598.73|1615|778983.73|0|0|6|131
+UDM|Udugama|0|0|0|0|0|0|0|0
+| Total|1471|11930006.17|286119.12|11643887.05|0|47|89|1335
