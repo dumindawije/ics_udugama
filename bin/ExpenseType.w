@@ -198,7 +198,7 @@ ELSE {&WINDOW-NAME} = CURRENT-WINDOW.
   VISIBLE,,RUN-PERSISTENT                                               */
 /* SETTINGS FOR FRAME DEFAULT-FRAME
    FRAME-NAME                                                           */
-/* BROWSE-TAB arbrw 1 DEFAULT-FRAME */
+/* BROWSE-TAB arbrw TEXT-2 DEFAULT-FRAME */
 /* SETTINGS FOR BUTTON btnCancel IN FRAME DEFAULT-FRAME
    NO-ENABLE                                                            */
 /* SETTINGS FOR BUTTON btnSave IN FRAME DEFAULT-FRAME
