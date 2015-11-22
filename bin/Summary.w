@@ -686,7 +686,6 @@ FOR EACH tt-db.
 
 END.
 
-MESSAGE bilCnt VIEW-AS ALERT-BOX INFO BUTTONS OK.
 
 /* filBills = bilCnt.                                   */
 /* filLines = lineCnt.                                  */
