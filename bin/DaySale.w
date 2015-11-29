@@ -1,7 +1,5 @@
 &ANALYZE-SUSPEND _VERSION-NUMBER AB_v10r12 GUI
 &ANALYZE-RESUME
-/* Connected Databases 
-*/
 &Scoped-define WINDOW-NAME C-Win
 &ANALYZE-SUSPEND _UIB-CODE-BLOCK _CUSTOM _DEFINITIONS C-Win 
 CREATE WIDGET-POOL.
@@ -2057,7 +2055,7 @@ END PROCEDURE.
 
 &ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE printHtml C-Win 
 PROCEDURE printHtml :
-OUTPUT TO VALUE("E:\ICS_Udugama\bin\Report.html").
+OUTPUT TO VALUE("E:\ICS\bin\Report.html").
 
     PUT UNFORMAT "<html>".
     PUT UNFORMAT "<head>".
@@ -2097,7 +2095,7 @@ OUTPUT TO VALUE("E:\ICS_Udugama\bin\Report.html").
 
     OUTPUT CLOSE.
 
-    DOS SILENT START chrome VALUE("E:\ICS_Udugama\bin\Report.html").
+    DOS SILENT START chrome VALUE("E:\ICS\bin\Report.html").
 
 END PROCEDURE.
 
@@ -2120,7 +2118,7 @@ FIND FIRST vehical WHERE vehical.ID = cmbVeh.
 tempVeh  = STRING(vehical.veh#).
 tempUser = session_User.
 
-OUTPUT TO VALUE("E:\ICS_Udugama\bin\print\DaySale.txt").
+OUTPUT TO VALUE("E:\ICS\bin\print\DaySale.txt").
           PUT UNFORMAT "User :|". 
           PUT UNFORMAT tempUser .
           PUT UNFORMAT "       Date : ".
@@ -2179,8 +2177,8 @@ OUTPUT TO VALUE("E:\ICS_Udugama\bin\print\DaySale.txt").
 
   OUTPUT CLOSE.
 
-  DOS SILENT START VALUE("E:\ICS_Udugama\bin\print\DaySale.bat").
-  DOS SILENT START excel VALUE("E:\ICS_Udugama\bin\print\DaySale.xlsm").
+  DOS SILENT START VALUE("E:\ICS\bin\print\DaySale.bat").
+  DOS SILENT START excel VALUE("E:\ICS\bin\print\DaySale.xlsm").
 
 END PROCEDURE.
 

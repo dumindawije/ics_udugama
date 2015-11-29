@@ -89,7 +89,7 @@ DEFINE BUTTON btnSave
      SIZE 14 BY 1.
 
 DEFINE VARIABLE filCode AS CHARACTER FORMAT "X(8)":U 
-     LABEL "Code" 
+     LABEL "Area Code" 
      VIEW-AS FILL-IN 
      SIZE 16 BY .88
      BGCOLOR 15 FGCOLOR 1  NO-UNDO.
@@ -198,7 +198,7 @@ ELSE {&WINDOW-NAME} = CURRENT-WINDOW.
   VISIBLE,,RUN-PERSISTENT                                               */
 /* SETTINGS FOR FRAME DEFAULT-FRAME
    FRAME-NAME                                                           */
-/* BROWSE-TAB arbrw TEXT-2 DEFAULT-FRAME */
+/* BROWSE-TAB arbrw 1 DEFAULT-FRAME */
 /* SETTINGS FOR BUTTON btnCancel IN FRAME DEFAULT-FRAME
    NO-ENABLE                                                            */
 /* SETTINGS FOR BUTTON btnSave IN FRAME DEFAULT-FRAME
@@ -455,7 +455,7 @@ END.
 
 &Scoped-define SELF-NAME filCode
 &ANALYZE-SUSPEND _UIB-CODE-BLOCK _CONTROL filCode C-Win
-ON ANY-KEY OF filCode IN FRAME DEFAULT-FRAME /* Code */
+ON ANY-KEY OF filCode IN FRAME DEFAULT-FRAME /* Area Code */
 DO:
   ASSIGN filCode.
   filCode = CAPS(filCode).
@@ -467,7 +467,7 @@ END.
 
 
 &ANALYZE-SUSPEND _UIB-CODE-BLOCK _CONTROL filCode C-Win
-ON LEAVE OF filCode IN FRAME DEFAULT-FRAME /* Code */
+ON LEAVE OF filCode IN FRAME DEFAULT-FRAME /* Area Code */
 DO:
   ASSIGN {&SELF-NAME}.
   
@@ -479,7 +479,7 @@ END.
 
 
 &ANALYZE-SUSPEND _UIB-CODE-BLOCK _CONTROL filCode C-Win
-ON RETURN OF filCode IN FRAME DEFAULT-FRAME /* Code */
+ON RETURN OF filCode IN FRAME DEFAULT-FRAME /* Area Code */
 DO:
   
     APPLY "CHOOSE":U TO btnSave.
@@ -490,7 +490,7 @@ END.
 
 
 &ANALYZE-SUSPEND _UIB-CODE-BLOCK _CONTROL filCode C-Win
-ON VALUE-CHANGED OF filCode IN FRAME DEFAULT-FRAME /* Code */
+ON VALUE-CHANGED OF filCode IN FRAME DEFAULT-FRAME /* Area Code */
 DO:
   ASSIGN filCode.
   filCode = CAPS(filCode).
