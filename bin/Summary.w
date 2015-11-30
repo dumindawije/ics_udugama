@@ -615,6 +615,7 @@ DO:
     dateTo   = ADD-INTERVAL(dateFrom,1,"years") - 1.
 END.
 
+
 FOR EACH bills WHERE bills.bilDate >= dateFrom AND bills.bilDate <= dateTo BY bills.bilDate DESC.
     FIND FIRST tt-db WHERE tt-db.DATE = bills.bilDate /*AND tt-db.VehId = bills.vehNo*/ NO-ERROR.
     IF NOT AVAILABLE tt-db THEN
@@ -623,9 +624,7 @@ FOR EACH bills WHERE bills.bilDate >= dateFrom AND bills.bilDate <= dateTo BY bi
             tt-db.VehId = bills.vehNo.
             tt-db.DATE = bills.bilDate.
             tt-db.Varience = tt-db.Varience + bills.Varience.
-           
     END.
-
 
     FOR EACH recipts WHERE recipts.bill# = bills.bill#.
         DEFINE VARIABLE price AS DECIMAL     NO-UNDO.
