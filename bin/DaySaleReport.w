@@ -14,30 +14,8 @@ DEFINE VARIABLE calendrTo AS COM-HANDLE   NO-UNDO.
 DEFINE VARIABLE dateFrom AS DATE        NO-UNDO.
 DEFINE VARIABLE dateTo AS DATE        NO-UNDO.
 
-
-DEFINE TEMP-TABLE tt-db
-    FIELD DATE            AS DATE                 
-    FIELD VehId            AS INT
-/*     FIELD Vehicle            AS CHAR */
-    FIELD Expiery         AS DECIMAL                 
-    FIELD Damage          AS DECIMAL                 
-    FIELD Free            AS DECIMAL                 
-    FIELD GR              AS DECIMAL                 
-    FIELD Varience        AS DECIMAL                 
-    FIELD Tol            AS DECIMAL         
-              
-    FIELD Cash            AS DECIMAL                 
-    FIELD Credit          AS DECIMAL                 
-    FIELD Cheque          AS DECIMAL                 
-    FIELD ChequesIn          AS DECIMAL                 
-/*     FIELD Collection      AS DECIMAL */
-
-    FIELD Income          AS DECIMAL                 
-    FIELD Expenses        AS DECIMAL                 
-/*     FIELD CashIn          AS DECIMAL */
-    FIELD RealizedCheques AS DECIMAL                 
-    FIELD GrossIncome          AS DECIMAL                 
-    .
+DEFINE TEMP-TABLE tt-lorryStock LIKE lorryStock.
+DEFINE TEMP-TABLE tt-print LIKE tt-lorryStock.
 
 /* _UIB-CODE-BLOCK-END */
 &ANALYZE-RESUME
@@ -55,16 +33,16 @@ DEFINE TEMP-TABLE tt-db
 &Scoped-define BROWSE-NAME BROWSE-3
 
 /* Internal Tables (found by Frame, Query & Browse Queries)             */
-&Scoped-define INTERNAL-TABLES tt-db
+&Scoped-define INTERNAL-TABLES tt-lorryStock
 
 /* Definitions for BROWSE BROWSE-3                                      */
-&Scoped-define FIELDS-IN-QUERY-BROWSE-3 DATE Expiery Damage Free GR Varience Tol Cash Credit ChequesIn Income Expenses GrossIncome   
+&Scoped-define FIELDS-IN-QUERY-BROWSE-3 Id itmName weight BSC BSP GRRD GRST LDC LDP ULC ULP RDC RDP billedP Excess Short TolP   
 &Scoped-define ENABLED-FIELDS-IN-QUERY-BROWSE-3   
 &Scoped-define SELF-NAME BROWSE-3
-&Scoped-define QUERY-STRING-BROWSE-3 FOR EACH tt-db
-&Scoped-define OPEN-QUERY-BROWSE-3 OPEN QUERY {&SELF-NAME} FOR EACH tt-db.
-&Scoped-define TABLES-IN-QUERY-BROWSE-3 tt-db
-&Scoped-define FIRST-TABLE-IN-QUERY-BROWSE-3 tt-db
+&Scoped-define QUERY-STRING-BROWSE-3 FOR EACH tt-lorryStock
+&Scoped-define OPEN-QUERY-BROWSE-3 OPEN QUERY {&SELF-NAME} FOR EACH tt-lorryStock.
+&Scoped-define TABLES-IN-QUERY-BROWSE-3 tt-lorryStock
+&Scoped-define FIRST-TABLE-IN-QUERY-BROWSE-3 tt-lorryStock
 
 
 /* Definitions for FRAME DEFAULT-FRAME                                  */
@@ -134,26 +112,30 @@ DEFINE RECTANGLE RECT-4
 /* Query definitions                                                    */
 &ANALYZE-SUSPEND
 DEFINE QUERY BROWSE-3 FOR 
-      tt-db SCROLLING.
+      tt-lorryStock SCROLLING.
 &ANALYZE-RESUME
 
 /* Browse definitions                                                   */
 DEFINE BROWSE BROWSE-3
 &ANALYZE-SUSPEND _UIB-CODE-BLOCK _DISPLAY-FIELDS BROWSE-3 C-Win _FREEFORM
   QUERY BROWSE-3 DISPLAY
-      DATE              FORMAT "99-99-9999"                 width 10    LABEL "Date"
-      Expiery         FORMAT ">,>>>,>>9.99" width 7 LABEL "Exp"
-      Damage          FORMAT ">,>>>,>>9.99" width 7 LABEL "Dam"
-      Free            FORMAT ">,>>>,>>9.99" width 7 
-      GR              FORMAT ">,>>>,>>9.99" width 7                                 
-      Varience        FORMAT "->,>>9.99" width 7    LABEL "Vari"
-      Tol             FORMAT ">,>>>,>>9.99" width 10 LABEL "Bills"
-      Cash            FORMAT ">,>>>,>>9.99" width 10
-      Credit          FORMAT ">,>>>,>>9.99" width 10
-      ChequesIn          FORMAT ">,>>>,>>9.99" width 10 LABEL "Cheque"
-      Income          FORMAT ">,>>>,>>9.99" width 12
-      Expenses        FORMAT ">,>>>,>>9.99" width 12 LABEL "Expense"
-      GrossIncome        FORMAT ">,>>>,>>9.99" width 12 LABEL "Balance"
+      Id          width 3                   LABEL "#"
+    itmName     width 35                  LABEL "Item"
+    weight      width 6                   LABEL "Weight"
+    BSC        FORMAT "->>,>>9" width 4   
+    BSP        FORMAT "->>,>>9" width 6   
+    GRRD       FORMAT "->>,>>9" width 4   LABEL "GRR"
+    GRST       FORMAT "->>,>>9" width 4   LABEL "GRS" 
+    LDC        FORMAT "->>,>>9" width 4   
+    LDP        FORMAT "->>,>>9" width 6   
+    ULC        FORMAT "->>,>>9" width 4   
+    ULP        FORMAT "->>,>>9" width 6   
+    RDC        FORMAT "->>,>>9" width 4   
+    RDP        FORMAT "->>,>>9" width 6   
+    billedP    FORMAT "->>,>>9" width 9   LABEL "Bill"
+    Excess     FORMAT "->>,>>9" width 9   
+    Short      FORMAT "->>,>>9" width 9   
+    TolP       FORMAT "->>,>>9" width 4   LABEL "Gap" COLUMN-FGCOLOR 12
 /* _UIB-CODE-BLOCK-END */
 &ANALYZE-RESUME
     WITH NO-ROW-MARKERS SEPARATORS SIZE 144 BY 20.58 ROW-HEIGHT-CHARS .58 FIT-LAST-COLUMN.
@@ -196,7 +178,7 @@ IF SESSION:DISPLAY-TYPE = "GUI":U THEN
          HIDDEN             = YES
          TITLE              = "Summary"
          COLUMN             = 1.29
-         ROW                = 2.65
+         ROW                = 2.69
          HEIGHT             = 22.77
          WIDTH              = 144.29
          MAX-HEIGHT         = 22.77
@@ -226,6 +208,10 @@ ELSE {&WINDOW-NAME} = CURRENT-WINDOW.
 /* SETTINGS FOR FRAME DEFAULT-FRAME
    FRAME-NAME                                                           */
 /* BROWSE-TAB BROWSE-3 btnPrint DEFAULT-FRAME */
+ASSIGN 
+       BROWSE-3:ALLOW-COLUMN-SEARCHING IN FRAME DEFAULT-FRAME = TRUE
+       BROWSE-3:COLUMN-RESIZABLE IN FRAME DEFAULT-FRAME       = TRUE.
+
 IF SESSION:DISPLAY-TYPE = "GUI":U AND VALID-HANDLE(C-Win)
 THEN C-Win:HIDDEN = no.
 
@@ -238,7 +224,7 @@ THEN C-Win:HIDDEN = no.
 &ANALYZE-SUSPEND _QUERY-BLOCK BROWSE BROWSE-3
 /* Query rebuild information for BROWSE BROWSE-3
      _START_FREEFORM
-OPEN QUERY {&SELF-NAME} FOR EACH tt-db.
+OPEN QUERY {&SELF-NAME} FOR EACH tt-lorryStock.
      _END_FREEFORM
      _Query            is OPENED
 */  /* BROWSE BROWSE-3 */
@@ -314,98 +300,19 @@ END.
 &ANALYZE-SUSPEND _UIB-CODE-BLOCK _CONTROL btnPrint C-Win
 ON CHOOSE OF btnPrint IN FRAME DEFAULT-FRAME /* Print */
 DO:
-    DEFINE VARIABLE veh AS CHARACTER   NO-UNDO.
-    DEFINE VARIABLE period AS CHARACTER   NO-UNDO.
+    
 
-    FIND FIRST tt-db NO-LOCK NO-ERROR.
-    IF NOT AVAILABLE tt-db THEN
+    FIND FIRST tt-lorryStock NO-LOCK NO-ERROR.
+    IF NOT AVAILABLE tt-lorryStock THEN
         DO:
             MESSAGE "No records available to print." VIEW-AS ALERT-BOX INFO BUTTONS OK.
             RETURN.
         END.
-    RELEASE tt-db.
+    RELEASE tt-lorryStock.
 
     {&SELF-NAME}:LABEL = "Working..".
 
-    MESSAGE "Confirm to print?" VIEW-AS ALERT-BOX QUESTION BUTTONS YES-NO UPDATE yn AS LOGICAL.
-    IF yn = YES THEN
-    DO:
-        DEFINE VARIABLE tempCount AS INTEGER     NO-UNDO.
-
-        OUTPUT TO VALUE("print\Summary.txt").
-
-        APPLY "VALUE-CHANGED":U TO radTimePeriod IN FRAME DEFAULT-FRAME. 
-
-            CASE radTimePeriod:
-                WHEN "Custom" THEN
-                    period = "From : " + string(calendrFrom:VALUE,"99/99/9999") + "  To : " + string(calendrTo:VALUE,"99/99/9999").
-                WHEN "Daily" THEN
-                    period = "Date : " + STRING((calendrFrom:VALUE),"99/99/9999").
-                WHEN "Monthly" THEN
-                    period = "Month : " + STRING(MONTH(calendrFrom:VALUE)) + " - " + STRING(YEAR(calendrFrom:VALUE)).
-                WHEN "Yearly" THEN
-                    period = "Year : " + STRING(YEAR(calendrFrom:VALUE)).
-            END CASE.
-
-            PUT UNFORMAT "|" + period + "|||||||By user : " + session_User SKIP.
-            PUT UNFORMAT "|Date|Expiery|Damage|Free|GR|Varience|Bill Tol|Cash|Credit|Cheque|Income|Expenses|Balance|" SKIP.
-
-            tempCount = 1.
-
-            FOR EACH tt-db.
-               PUT UNFORMAT STRING( tempCount) + "|" .
-               PUT UNFORMAT STRING( DATE        ) + "|" .
-               PUT UNFORMAT STRING(zero(Expiery     )) + "|" .
-               PUT UNFORMAT STRING(zero(Damage      )) + "|" .
-               PUT UNFORMAT STRING(zero(Free        )) + "|" .
-               PUT UNFORMAT STRING(zero(GR          )) + "|".
-               PUT UNFORMAT STRING(zero(Varience    )) + "|".
-               PUT UNFORMAT STRING(zero(Tol         )) + "|".
-               PUT UNFORMAT STRING(zero(Cash        )) + "|".
-               PUT UNFORMAT STRING(zero(Credit      )) + "|".
-               PUT UNFORMAT STRING(zero(ChequesIn   )) + "|".
-               PUT UNFORMAT STRING(zero(Income      )) + "|".
-               PUT UNFORMAT STRING(zero(Expenses    )) + "|".
-               PUT UNFORMAT STRING(zero(GrossIncome )) + "|"SKIP.
-               tempCount = tempCount + 1.
-
-               accumulate Expiery      (total).
-               accumulate Damage       (total).
-               accumulate Free         (total).
-               accumulate GR           (total).
-               accumulate Varience     (total).
-               accumulate Tol          (total).
-               accumulate Cash         (total).
-               accumulate Credit       (total).
-               accumulate ChequesIn    (total).
-               accumulate Income       (total).
-               accumulate Expenses     (total).
-               accumulate GrossIncome  (total).
-            END.
-
-            PUT UNFORMAT "~n".
-
-            PUT UNFORMAT "|Total|" .
-            PUT UNFORMAT STRING(accum total Expiery     ) + "|" .   
-            PUT UNFORMAT STRING(accum total Damage      ) + "|" .   
-            PUT UNFORMAT STRING(accum total Free        ) + "|" .   
-            PUT UNFORMAT STRING(accum total GR          ) + "|".    
-            PUT UNFORMAT STRING(accum total Varience    ) + "|".    
-            PUT UNFORMAT STRING(accum total Tol         ) + "|".    
-            PUT UNFORMAT STRING(accum total Cash        ) + "|".    
-            PUT UNFORMAT STRING(accum total Credit      ) + "|".    
-            PUT UNFORMAT STRING(accum total ChequesIn   ) + "|".    
-            PUT UNFORMAT STRING(accum total Income      ) + "|".    
-            PUT UNFORMAT STRING(accum total Expenses    ) + "|".    
-            PUT UNFORMAT STRING(accum total GrossIncome ) + "|"SKIP.
-
-        OUTPUT CLOSE.
-
-
-        DOS SILENT START VALUE("print\Summary.bat").
-
-        DOS SILENT START excel VALUE("print\Summary.xlsx").
-    END.
+    RUN print.
 
     {&SELF-NAME}:LABEL = "Print".
 END.
@@ -422,14 +329,12 @@ DO:
     dateFrom = calendrFrom:VALUE.
     dateTo = calendrTo:VALUE.
 
-    FOR EACH tt-db.
-        DELETE tt-db.
-    END.
+    RUN ttSum.
 
-    RUN ttBind.
     {&SELF-NAME}:LABEL = "View".
 
-    OPEN QUERY BROWSE-3 FOR EACH tt-db BY tt-db.DATE DESC.
+    OPEN QUERY BROWSE-3 FOR EACH tt-lorryStock.
+    APPLY "VALUE-CHANGED":U TO BROWSE-3.
 END.
 
 /* _UIB-CODE-BLOCK-END */
@@ -532,7 +437,7 @@ PROCEDURE control_load :
 DEFINE VARIABLE UIB_S    AS LOGICAL    NO-UNDO.
 DEFINE VARIABLE OCXFile  AS CHARACTER  NO-UNDO.
 
-OCXFile = SEARCH( "Summary.wrx":U ).
+OCXFile = SEARCH( "DaySaleReport.wrx":U ).
 IF OCXFile = ? THEN
   OCXFile = SEARCH(SUBSTRING(THIS-PROCEDURE:FILE-NAME, 1,
                      R-INDEX(THIS-PROCEDURE:FILE-NAME, ".":U), "CHARACTER":U) + "wrx":U).
@@ -549,7 +454,7 @@ DO:
   .
   RUN initialize-controls IN THIS-PROCEDURE NO-ERROR.
 END.
-ELSE MESSAGE "Summary.wrx":U SKIP(1)
+ELSE MESSAGE "DaySaleReport.wrx":U SKIP(1)
              "The binary control file could not be found. The controls cannot be loaded."
              VIEW-AS ALERT-BOX TITLE "Controls Not Loaded".
 
@@ -602,98 +507,207 @@ END PROCEDURE.
 /* _UIB-CODE-BLOCK-END */
 &ANALYZE-RESUME
 
-&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE ttBind C-Win 
-PROCEDURE ttBind :
-DEFINE VARIABLE bilCnt AS INTEGER     NO-UNDO.
-DEFINE VARIABLE lineCnt AS INTEGER     NO-UNDO.
-
-IF radTimePeriod = "Daily" THEN
-    dateTo = dateFrom.
-IF radTimePeriod = "Monthly" THEN
-DO:
-    dateFrom = DATE(MONTH(dateFrom),01,YEAR(dateFrom)).
-    dateTo   = ADD-INTERVAL(dateFrom,1,"months") - 1.
-END.
-IF radTimePeriod = "Yearly" THEN
-DO:
-    dateFrom = DATE(1,1,YEAR(dateFrom)).
-    dateTo   = ADD-INTERVAL(dateFrom,1,"years") - 1.
-END.
-
-FOR EACH bills WHERE bills.bilDate >= dateFrom AND bills.bilDate <= dateTo BY bills.bilDate DESC.
-    FIND FIRST tt-db WHERE tt-db.DATE = bills.bilDate /*AND tt-db.VehId = bills.vehNo*/ NO-ERROR.
-    IF NOT AVAILABLE tt-db THEN
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE print C-Win 
+PROCEDURE print :
+DEFINE VARIABLE veh AS CHARACTER   NO-UNDO.
+    DEFINE VARIABLE period AS CHARACTER   NO-UNDO.
+    
+    MESSAGE "Confirm to print?" VIEW-AS ALERT-BOX QUESTION BUTTONS YES-NO UPDATE yn AS LOGICAL.
+    IF yn = YES THEN
     DO:
-        CREATE tt-db.
-            tt-db.VehId = bills.vehNo.
-            tt-db.DATE = bills.bilDate.
-            tt-db.Varience = tt-db.Varience + bills.Varience.
-            tt-db.Tol      = tt-db.Tol + bills.Tol.
+        OUTPUT TO VALUE("print\DaySaleReport.txt").
+
+        APPLY "VALUE-CHANGED":U TO radTimePeriod IN FRAME DEFAULT-FRAME.
+
+            CASE radTimePeriod:
+                WHEN "Custom" THEN
+                    period = "From : " + string(calendrFrom:VALUE,"99/99/9999") + "  To : " + string(calendrTo:VALUE,"99/99/9999").
+                WHEN "Daily" THEN
+                    period = "Date : " + STRING((calendrFrom:VALUE),"99/99/9999").
+                WHEN "Monthly" THEN
+                    period = "Month : " + STRING(MONTH(calendrFrom:VALUE)) + " - " + STRING(YEAR(calendrFrom:VALUE)).
+                WHEN "Yearly" THEN
+                    period = "Year : " + STRING(YEAR(calendrFrom:VALUE)).
+            END CASE.
+
+            PUT UNFORMAT "|" + period + "|||||||By user : " + session_User SKIP.
+            PUT UNFORMAT "#|Item|Weight|BSC|BSP|GRRD|GRST|LDC|LDP|ULC|ULP|RDC|RDP|Bill|Exess|Short|Gap|" SKIP.
+
+            FOR EACH tt-lorryStock.
+               PUT UNFORMAT STRING(     tt-lorryStock.ID           ) + "|" .
+               PUT UNFORMAT STRING(     tt-lorryStock.itmName      ) + "|" .
+               PUT UNFORMAT STRING(     tt-lorryStock.weight       ) + "|" .
+               PUT UNFORMAT STRING(zero(tt-lorryStock.BSC     )) + "|".
+               PUT UNFORMAT STRING(zero(tt-lorryStock.BSP     )) + "|".
+               PUT UNFORMAT STRING(zero(tt-lorryStock.GRRD    )) + "|".
+               PUT UNFORMAT STRING(zero(tt-lorryStock.GRST    )) + "|".
+               PUT UNFORMAT STRING(zero(tt-lorryStock.LDC     )) + "|".
+               PUT UNFORMAT STRING(zero(tt-lorryStock.LDP     )) + "|".
+               PUT UNFORMAT STRING(zero(tt-lorryStock.ULC     )) + "|".
+               PUT UNFORMAT STRING(zero(tt-lorryStock.ULP     )) + "|".
+               PUT UNFORMAT STRING(zero(tt-lorryStock.RDC     )) + "|".
+               PUT UNFORMAT STRING(zero(tt-lorryStock.RDP     )) + "|".
+               PUT UNFORMAT STRING(zero(tt-lorryStock.billedP )) + "|".
+               PUT UNFORMAT STRING(zero(tt-lorryStock.Excess  )) + "|".
+               PUT UNFORMAT STRING(zero(tt-lorryStock.Short   )) + "|".
+               PUT UNFORMAT STRING(zero(tt-lorryStock.TolP    )) + "|"SKIP.
+            END.
+        OUTPUT CLOSE.
+
+
+        DOS SILENT START VALUE("print\DaySaleReport.bat").
+
+        DOS SILENT START excel VALUE("print\DaySaleReport.xlsx").
     END.
 
-    FOR EACH recipts WHERE recipts.bill# = bills.bill#.
-        DEFINE VARIABLE price AS DECIMAL     NO-UNDO.
+END PROCEDURE.
 
-        FIND FIRST itms WHERE itms.itmID = recipts.item# NO-ERROR.
-        IF AVAILABLE itms THEN.
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE ttSum C-Win 
+PROCEDURE ttSum :
+DEFINE VARIABLE cnt AS INTEGER     NO-UNDO.
+
+    IF radTimePeriod = "Daily" THEN
+        dateTo = dateFrom.
+    IF radTimePeriod = "Monthly" THEN
+    DO:
+        dateFrom = DATE(MONTH(dateFrom),01,YEAR(dateFrom)).
+        dateTo   = ADD-INTERVAL(dateFrom,1,"months") - 1.
+    END.
+    IF radTimePeriod = "Yearly" THEN
+    DO:
+        dateFrom = DATE(1,1,YEAR(dateFrom)).
+        dateTo   = ADD-INTERVAL(dateFrom,1,"years") - 1.
+    END.
+    
+    EMPTY TEMP-TABLE tt-lorryStock NO-ERROR.
+    
+    FOR EACH lorryStock WHERE lorryStock.crDate >= dateFrom AND lorryStock.crDate <= dateTo NO-LOCK.
+        FIND FIRST tt-lorryStock WHERE tt-lorryStock.itmID = lorryStock.itmID NO-ERROR.
+        IF NOT AVAILABLE tt-lorryStock THEN
         DO:
-            price = itms.unitPriceS.
+            IF  (lorryStock.BSC     +
+                 lorryStock.BSP     +
+                 lorryStock.GRRD    +
+                 lorryStock.GRST    +
+                 lorryStock.LDC     +
+                 lorryStock.LDP     +
+                 lorryStock.ULC     +
+                 lorryStock.ULP     +
+                 lorryStock.RDC     +
+                 lorryStock.RDP     +
+                 lorryStock.TolP    +
+                 lorryStock.TOlC    +
+                 lorryStock.billedP +
+                 lorryStock.Excess  +
+                 lorryStock.Short   
+                 ) <> 0 THEN
+            DO:
+            CREATE tt-lorryStock.
+                     tt-lorryStock.VehID   = lorryStock.VehID  . 
+                     tt-lorryStock.itmID   = lorryStock.itmID  . 
+                     tt-lorryStock.itmName = lorryStock.itmName. 
+                     tt-lorryStock.SortId  = lorryStock.SortId .
+                     tt-lorryStock.weight  = lorryStock.Weight . 
+                     tt-lorryStock.BSC     = lorryStock.BSC    . 
+                     tt-lorryStock.BSP     = lorryStock.BSP    .
+                     tt-lorryStock.GRRD    = lorryStock.GRRD   . 
+                     tt-lorryStock.GRST    = lorryStock.GRST   .
+                     tt-lorryStock.LDC     = lorryStock.LDC    . 
+                     tt-lorryStock.LDP     = lorryStock.LDP    . 
+                     tt-lorryStock.ULC     = lorryStock.ULC    . 
+                     tt-lorryStock.ULP     = lorryStock.ULP    . 
+                     tt-lorryStock.RDC     = lorryStock.RDC    . 
+                     tt-lorryStock.RDP     = lorryStock.RDP    . 
+                     tt-lorryStock.billedP = lorryStock.billedP   .
+                     tt-lorryStock.Excess  = lorryStock.Excess . 
+                     tt-lorryStock.Short   = lorryStock.Short  . 
+                     tt-lorryStock.CrDate  = lorryStock.CrDate    .
+    /*                  Excess SHORT Varience */
+                     tt-lorryStock.TolP    = tt-lorryStock.Excess -  tt-lorryStock.Short  . 
+            END.
         END.
-        RELEASE itms.
-
-        IF recipts.ItmDiscount = 100 THEN
-            tt-db.Free = tt-db.Free + (recipts.pieses * price).
         ELSE
-            ACCUMULATE recipts.pieses * price (TOTAL).
-
-        ACCUMULATE recipts.damP * price (TOTAL COUNT).
-        ACCUMULATE recipts.expP * price (TOTAL).
-        ACCUMULATE recipts.GRRD * price (TOTAL).
-        ACCUMULATE recipts.GRST * price (TOTAL).
+        DO:
+            ASSIGN
+                    tt-lorryStock.BSC     =   tt-lorryStock.BSC      + lorryStock.BSC     
+                    tt-lorryStock.BSP     =   tt-lorryStock.BSP      + lorryStock.BSP     
+                    tt-lorryStock.GRRD    =   tt-lorryStock.GRRD     + lorryStock.GRRD    
+                    tt-lorryStock.GRST    =   tt-lorryStock.GRST     + lorryStock.GRST    
+                    tt-lorryStock.LDC     =   tt-lorryStock.LDC      + lorryStock.LDC     
+                    tt-lorryStock.LDP     =   tt-lorryStock.LDP      + lorryStock.LDP     
+                    tt-lorryStock.ULC     =   tt-lorryStock.ULC      + lorryStock.ULC     
+                    tt-lorryStock.ULP     =   tt-lorryStock.ULP      + lorryStock.ULP     
+                    tt-lorryStock.RDC     =   tt-lorryStock.RDC      + lorryStock.RDC     
+                    tt-lorryStock.RDP     =   tt-lorryStock.RDP      + lorryStock.RDP     
+                    tt-lorryStock.billedP =   tt-lorryStock.billedP  + lorryStock.billedP 
+                    tt-lorryStock.Excess  =   tt-lorryStock.Excess   + lorryStock.Excess  
+                    tt-lorryStock.Short   =   tt-lorryStock.Short    + lorryStock.Short  
+                /*                  Excess SHORT Varience */
+                     tt-lorryStock.TolP    = tt-lorryStock.Excess -  tt-lorryStock.Short  
+                .
+        END.
     END.
 
-    tt-db.Damage    = ACCUM TOTAL recipts.damP * price.
-    tt-db.Expiery    = ACCUM TOTAL recipts.expP * price.
-    tt-db.GR   = ACCUM TOTAL recipts.GRST * price.
-
-    RELEASE tt-db.
-
-    lineCnt = lineCnt + ACCUM COUNT recipts.damP * price.
-
-    ACCUMULATE bills.bilDate (COUNT).
-
-END.
-
-bilCnt = ACCUM COUNT bills.bilDate.
-
-FOR EACH tt-db.
-    FOR EACH Expense WHERE DATE(Expense.DATE) = tt-db.DATE.
-      ACCUMULATE Expense.Amount (TOTAL).
+    EMPTY TEMP-TABLE tt-print.
+    
+    FOR EACH tt-lorryStock NO-LOCK,
+        EACH itms WHERE itms.itmID = tt-lorryStock.itmID NO-LOCK
+        BY itms.SortId.
+        cnt = cnt + 1.
+            CREATE tt-print.
+            tt-print.ID      = cnt                      .
+            tt-print.VehID   = tt-lorryStock.VehID      .  
+            tt-print.itmID   = tt-lorryStock.itmID      . 
+            tt-print.itmName = tt-lorryStock.itmName    . 
+            tt-print.SortId  = tt-lorryStock.SortId     .
+            tt-print.weight  = tt-lorryStock.Weight     . 
+            tt-print.BSC     = tt-lorryStock.BSC        . 
+            tt-print.BSP     = tt-lorryStock.BSP        .
+            tt-print.GRRD    = tt-lorryStock.GRRD       . 
+            tt-print.GRST    = tt-lorryStock.GRST       .
+            tt-print.LDC     = tt-lorryStock.LDC        . 
+            tt-print.LDP     = tt-lorryStock.LDP        . 
+            tt-print.ULC     = tt-lorryStock.ULC        . 
+            tt-print.ULP     = tt-lorryStock.ULP        . 
+            tt-print.RDC     = tt-lorryStock.RDC        . 
+            tt-print.RDP     = tt-lorryStock.RDP        . 
+            tt-print.billedP = tt-lorryStock.billedP    .
+            tt-print.Excess  = tt-lorryStock.Excess     . 
+            tt-print.Short   = tt-lorryStock.Short      . 
+            tt-print.CrDate  = tt-lorryStock.CrDate     .
+            tt-print.TolP    = tt-lorryStock.TolP       .
     END.
-    tt-db.Expense = ACCUM TOTAL Expense.Amount.
-
-    FOR EACH Payments WHERE date(Payments.datePay) = tt-db.DATE AND Payments.stat = YES.
-        IF Payments.PayMethod = "Cash" THEN tt-db.Cash = tt-db.Cash + Payments.Amount.
-        IF Payments.PayMethod = "Cheque" THEN tt-db.Cheque = tt-db.Cheque + Payments.Amount.
-        IF Payments.PayMethod = "Credit" THEN tt-db.Credit = tt-db.Credit + Payments.Amount.
+    
+    EMPTY TEMP-TABLE tt-lorryStock.
+    
+    FOR EACH tt-print.
+        CREATE tt-lorryStock.
+            tt-lorryStock.ID      = tt-print.ID         .
+            tt-lorryStock.VehID   = tt-print.VehID      .  
+            tt-lorryStock.itmID   = tt-print.itmID      . 
+            tt-lorryStock.itmName = tt-print.itmName    . 
+            tt-lorryStock.SortId  = tt-print.SortId     .
+            tt-lorryStock.weight  = tt-print.Weight     . 
+            tt-lorryStock.BSC     = tt-print.BSC        . 
+            tt-lorryStock.BSP     = tt-print.BSP        .
+            tt-lorryStock.GRRD    = tt-print.GRRD       . 
+            tt-lorryStock.GRST    = tt-print.GRST       .
+            tt-lorryStock.LDC     = tt-print.LDC        . 
+            tt-lorryStock.LDP     = tt-print.LDP        . 
+            tt-lorryStock.ULC     = tt-print.ULC        . 
+            tt-lorryStock.ULP     = tt-print.ULP        . 
+            tt-lorryStock.RDC     = tt-print.RDC        . 
+            tt-lorryStock.RDP     = tt-print.RDP        . 
+            tt-lorryStock.billedP = tt-print.billedP    .
+            tt-lorryStock.Excess  = tt-print.Excess     . 
+            tt-lorryStock.Short   = tt-print.Short      . 
+            tt-lorryStock.CrDate  = tt-print.CrDate     .
+            tt-lorryStock.TolP    = tt-print.TolP       .
     END.
 
-    FOR EACH cheques WHERE date(cheques.crDate) = tt-db.DATE.
-        ACCUMULATE cheques.amount (TOTAL).
-    END.
-
-    tt-db.ChequesIn = ACCUM TOTAL cheques.amount.
-
-    tt-db.Income = tt-db.Cash + tt-db.Cheque + tt-db.ChequesIn.
-    tt-db.GrossIncome = tt-db.Income - tt-db.Expense.
-
-END.
-
-
-/* filBills = bilCnt.                                   */
-/* filLines = lineCnt.                                  */
-/*                                                      */
-/* DISPLAY  filBills filLines WITH FRAME {&FRAME-NAME}. */
 
 END PROCEDURE.
 

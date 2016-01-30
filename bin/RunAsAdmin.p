@@ -1,4 +1,8 @@
 PROPATH = "E:\ICS_Udugama\bin," + PROPATH.
+PROPATH = REPLACE(PROPATH,"E:\ICS_\bin,","").
+PROPATH = REPLACE(PROPATH,"E:\ICS\bin,","").
+PROPATH = REPLACE(PROPATH,"E:\ICS_Shaw\bin,","").
+
 CONNECT -db E:\ICS_Udugama\db\ics -1 NO-ERROR.
 
 DEFINE NEW GLOBAL SHARED VARIABLE session_UsersName AS CHARACTER INIT "admin".
