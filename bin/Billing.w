@@ -223,7 +223,7 @@ DEFINE VARIABLE cmbName AS CHARACTER FORMAT "X(32)":U INITIAL "0"
      VIEW-AS COMBO-BOX INNER-LINES 40
      LIST-ITEM-PAIRS "--Select Here--","0"
      DROP-DOWN-LIST
-     SIZE 35 BY 1 NO-UNDO.
+     SIZE 35 BY .88 NO-UNDO.
 
 DEFINE VARIABLE cmbSearchArea AS INTEGER FORMAT ">>9":U INITIAL 0 
      LABEL "Area" 
@@ -954,9 +954,9 @@ DO:
                     ACCUMULATE recipts.valu (TOTAL).                                                                                              
                     ACCUMULATE recipts.amount (TOTAL).                                                                                            
                     IF recipts.ItmDiscount = 0 THEN                                                                                               
-                        DiscountEligibleAmountSum = DiscountEligibleAmountSum + recipts.amount.         
-                    ELSE IF tt-sale.ItmDiscount = 100.00 THEN
-                        LineDiscountAmountSum = LineDiscountAmountSum + tt-sale.valu.
+                        DiscountEligibleAmountSum = DiscountEligibleAmountSum + recipts.amount.                                                   
+                    ELSE IF recipts.ItmDiscount = 100.00 THEN
+                        LineDiscountAmountSum = LineDiscountAmountSum + recipts.valu.
                     ELSE                                                                                                                          
                     DO:                                                                                                                           
                          LineDiscountAmountSum = LineDiscountAmountSum + ((recipts.amount * 100 / ( 100 - recipts.ItmDiscount)) - recipts.amount).
@@ -972,11 +972,11 @@ DO:
             filLineAmountSum = ttSaleAmountSum.                                                                                   
                                                                                                                                   
             /*Discount Amount for undiscounted tt-sale amount sum*/                                                               
-            filDiscountBill = ROUND(DiscountEligibleAmountSum * (filDiscountRate / 100),2).  
+            filDiscountBill = ROUND(DiscountEligibleAmountSum * (filDiscountRate / 100),2).      
             IF  ROUND(DiscountEligibleAmountSum * (filDiscountRate / 100),2) < 0 THEN filDiscountBill = 0.00.
                                                                                                                                   
             /*Final Sum of Discounts Amount for the bill*/                                                                        
-            filDiscountBillAmount = ROUND(DiscountEligibleAmountSum * (filDiscountRate / 100),2) + LineDiscountAmountSum.       
+            filDiscountBillAmount = ROUND(DiscountEligibleAmountSum * (filDiscountRate / 100),2) + LineDiscountAmountSum.    
             IF  ROUND(DiscountEligibleAmountSum * (filDiscountRate / 100),2) + LineDiscountAmountSum < 0 THEN filDiscountBillAmount = 0.00.
 
             OPEN QUERY brw FOR EACH tt-sale.
@@ -1065,12 +1065,12 @@ DO:
         .
   ENABLE filGRRD filDiscountRateItem btnCancel btnSave cmbName filDamP filExpP filGRST filPieses WITH FRAME DEFAULT-FRAME . 
   calendr:ENABLED = FALSE.
-  DISABLE filVarience filBillNo filVarience 
-      filDiscountRate cmbArea cmbCus cmbEmp cmbVeh
+  DISABLE filBillNo filDiscountRate
+      cmbArea cmbCus cmbEmp cmbVeh
       brw btnAdd btnDel btnMod btnCancelBill btnSaveBill WITH FRAME DEFAULT-FRAME.
 
   DISPLAY filVarience filGRRD filDiscountRateItem btnCancel btnSave filCasePrice cmbName
-          filAmount filBill# filDamP filExpP 
+          filAmount filBill# filDamP filExpP filDiscountRate
           filGRST filKg filPieses filRecipt# filTotal filUnitPrice WITH FRAME DEFAULT-FRAME.
   addModify = "add".
   RUN itemsLoaderAll.
@@ -1487,7 +1487,7 @@ DO:
   DEFINE VARIABLE itemsName AS CHARACTER NO-UNDO.
   DEFINE VARIABLE itemsW AS DEC   NO-UNDO.
 
-  IF cmbName = "0" THEN
+  IF cmbName = "-1" THEN
   DO:
       MESSAGE "Item Name cannot be a blank." VIEW-AS ALERT-BOX INFO BUTTONS OK .
       RETURN.
@@ -1657,7 +1657,8 @@ DO:
                 paidAmount   = filPaid            .
           bills.cusName      = tempCusName        .
           bills.varience     = filVarience        .
-          bills.discountedAmount = filDiscountBillAmount.
+          bills.discountedAmount = 0.00.
+/*           bills.discountedAmount = filDiscountBillAmount. */
         
             FIND FIRST paramtrs WHERE NAME = "lastbill#" EXCLUSIVE-LOCK NO-ERROR.
                 paramtrs.val = STRING(filBill#).
@@ -2649,10 +2650,10 @@ filLineAmountSum = ttSaleAmountSum.
 
 /*Discount Amount for undiscounted tt-sale amount sum*/
 filDiscountBill = ROUND(DiscountEligibleAmountSum * (filDiscountRate / 100),2).
+IF  ROUND(DiscountEligibleAmountSum * (filDiscountRate / 100),2) < 0 THEN filDiscountBill = 0.00.
 
 /*Final Total for the bill*/
 filDiscountedTotal = (ttSaleAmountSum - ROUND(DiscountEligibleAmountSum * (filDiscountRate / 100),2)) + filVarience.
-IF  ROUND(DiscountEligibleAmountSum * (filDiscountRate / 100),2) < 0 THEN filDiscountBill = 0.00.
 
 /*Final Sum of Discounts Amount for the bill*/
 filDiscountBillAmount = ROUND(DiscountEligibleAmountSum * (filDiscountRate / 100),2) + LineDiscountAmountSum.
