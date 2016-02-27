@@ -202,7 +202,7 @@ DEFINE VARIABLE cmbArea AS INTEGER FORMAT ">>>>9":U INITIAL 0
      VIEW-AS COMBO-BOX INNER-LINES 10
      LIST-ITEM-PAIRS "--Select Here--",0
      DROP-DOWN-LIST
-     SIZE 35 BY .88 NO-UNDO.
+     SIZE 35 BY 1 NO-UNDO.
 
 DEFINE VARIABLE cmbCus AS INTEGER FORMAT ">>>>>>9":U INITIAL 0 
      LABEL "Customer" 
@@ -1588,7 +1588,7 @@ DO:
     DEFINE VARIABLE tempP AS INTEGER     NO-UNDO.
     DEFINE VARIABLE tempPC AS INTEGER     NO-UNDO.
 
-    IF filPaid > filDiscountedTotal THEN
+    IF filDiscountedTotal > 0 AND  filPaid > filDiscountedTotal THEN
     DO:
         MESSAGE "Invalid Cash payment." VIEW-AS ALERT-BOX WARNING BUTTONS OK TITLE "Inventry Control Syatem".
         RETURN.
